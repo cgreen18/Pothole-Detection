@@ -11,8 +11,10 @@ Version:
 
 import cv2
 import matplotlib.pyplot as plt
+#from plt import plot, subplot, draw,
 import numpy as np
 import os
+import time
 
 def rename_all_(path):
     i = 0
@@ -94,12 +96,38 @@ def main():
     new_path = "bdd100k/images/10k/renamed_images"
     #"~/Documents/University/Junior Year/Pothole Detection/bdd100k/images/10k/test"
 
-    count = 5
+    count = 20
 
     rename_this_many_(data_path , new_path , count)
 
-    
-    file_number = 0
+
+    #plt.ion()
+
+    for i in range(0,20):
+        file_number = i
+
+        image_path = os.path.join(data_path, "image" + str(file_number) + ".jpg")
+
+
+        (orig_image, proc_image) = process_image(image_path)
+
+        plt.figure()
+
+        plt.subplot(2,1,1)
+        plt.imshow(orig_image)
+
+        plt.subplot(2,1,2)
+        plt.imshow(proc_image)
+
+        plt.show(block=False)
+
+        time.sleep(4)
+
+        plt.close()
+
+        #cv2.destroyAllWindows()
+    return
+    #file_number = 0
 
     image_path = os.path.join(data_path, "image" + str(file_number) + ".jpg")
 
