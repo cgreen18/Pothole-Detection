@@ -1,0 +1,103 @@
+'''
+Author: Conor Green
+Description:
+Version:
+1.0 - April 7 2019
+
+'''
+
+##colorizer.org
+
+import cv2
+import matplotlib.pyplot as plt
+import numpy as np
+import os
+
+
+#Renames file number num in path
+def rename_file( path , num , new_name ):
+    file = os.listdir(folder)[file_number]
+
+    return
+
+def rename_all(path):
+
+    for filename in os.listdir(path):
+        os.rename(filename,"image" + str(i) )
+
+
+    return
+
+folder = "~/Documents/University/Junior\ Year/Pothole\ Detection/bdd100k/images/10k/train"
+
+file_number = 5
+
+
+
+
+
+
+
+
+
+#Iterative functionality
+'''
+for filename in os.listdir(folder):
+    print filename
+    i +=1
+    os.rename(filename,"image2")
+    if(i > 1):
+        break
+'''
+
+
+os.rename("","")
+
+
+image1 = cv2.imread("image1.jpg")
+
+
+print image1.shape
+
+image1 = cv2.cvtColor(image1,cv2.COLOR_BGR2RGB)
+
+
+
+
+#hue saturation value
+hsv_image1 = cv2.cvtColor(image1,cv2.COLOR_BGR2HSV)
+
+
+#allow values of hue 0-14 , saturation 100-255 and value 100-255
+mask1 = cv2.inRange(hsv_image1,(0,0,100),(255,60,180))
+
+target = cv2.bitwise_and(image1,image1,mask = mask1)
+
+#cv2.imwrite("image1_modified",target)
+
+kernel = np.ones((12,12));
+
+target = cv2.erode(target, kernel, iterations=1)
+
+target = cv2.dilate(target,kernel,iterations =1)
+
+
+target[target>0] = 1
+image2 = image1*target
+
+
+cv2.imwrite("processed_image.jpg",image2)
+
+
+plt.figure()
+
+#plt.subplot(2,1,2)
+#plt.imshow(target)
+
+plt.subplot(2,1,1)
+plt.imshow(image1)
+
+plt.subplot(2,1,2)
+plt.imshow(image2)
+
+plt.show()
