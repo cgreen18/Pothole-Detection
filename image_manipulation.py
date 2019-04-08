@@ -7,6 +7,7 @@ Version:
 1.2 - April 8 2019 - Works as intended. Still requires paramter tuning
 1.3 - April 8 2019 - Added daylight or not classification
 1.4 - April 8 2019 - Added slideshow functionality
+1.5 - April 8 2019 - Fixed bugs, tuned daylight, better coding style
 '''
 ##colorizer.org
 
@@ -34,36 +35,45 @@ def rename_this_many_(path , new_path , count):
         os.rename(old_file , new_file)
     return
 
+def get_avg_val(hsv_image):
+    sum = 0
+
+    for i in range(0,h):
+        for j in range(0,w):
+            sum += hsv_image[i,j,2]
+
+    avg_value = sum/(w*h)
+
+    return avg_value
+
 def is_daytime(hsv_image):
     #paramter
-    threshold = 50
+    threshold = 120
 
     is_day = True
 
     h , w , d = hsv_image.shape
 
-    sum = 0
-    avg_sum = h*w*threshold
+    avg_val = get_avg_val(hsv_image)
 
-    for i in range(0,h):
-        for j in range(0,w):
-            sum += hsv_image[:,:,2][i,j]
-
-    if sum < avg_sum:
+    if avg_val < threshold:
         is_day = False
 
     return is_day
 
 def classify_hsv_image(hsv_image, verbose):
+    classification = "not daylight"
+
     if is_daytime(hsv_image) == True:
         classification = "daylight"
+
 
     if verbose == True:
         print classification
 
     return classification
 
-def get_mask(im_class):
+def get_mask(im_class , im_hsv ):
     if im_class == "daylight":
         return cv2.inRange(im_hsv,(0,0,100),(255,60,180))
 
@@ -90,7 +100,7 @@ def process_image(image_path , verbose):
 
     im_class = classify_hsv_image(im_hsv , verbose)
 
-    mask = get_mask(im_class)
+    mask = get_mask(im_class , im_hsv )
 
     im = cv2.bitwise_and(orig_image,orig_image,mask = mask)
 
@@ -142,7 +152,7 @@ def main():
 
     rename_this_many_(data_path , new_path , count)
 
-    slideshow_images(new_path , count , 3)
+    slideshow_images(new_path , count , 3 , verbose)
 
     return
 
