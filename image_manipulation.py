@@ -4,6 +4,7 @@ Description:
 Version:
 1.0 - April 7 2019 - Basic functionality to learn libraries
 1.1 - April 8 2019 - Added better code structure
+1.2 - April 8 2019 - Works as intended. Still requires paramter tuning
 
 '''
 
@@ -61,26 +62,31 @@ def process_image(image_path):
     return (orig_image , proc_image)
 
 def main():
+
+    additional_path ="bdd100k/images/10k/test"
     current_directory = ""
-    additional_path = current_directory + "bdd100k/images/10k/test"
+    data_path = additional_path + current_directory
     #"~/Documents/University/Junior Year/Pothole Detection/bdd100k/images/10k/test"
 
     count = 5
 
-    rename_this_many_(additional_path , count)
+    rename_this_many_(data_path , count)
 
     file_number = 0
-    image_path = "image" + str(file_number) + ".jpg"
+
+    image_path = os.path.join(data_path, "image" + str(file_number) + ".jpg")
+
 
     (orig_image, proc_image) = process_image(image_path)
 
     plt.figure()
     plt.subplot(2,1,1)
-    imshow(orig_image)
+    plt.imshow(orig_image)
 
     plt.subplot(2,1,2)
-    imshow(proc_image)
+    plt.imshow(proc_image)
 
+    plt.show()
 
     #cv2.imwrite("image1_modified",target)
     #cv2.imwrite("processed_image.jpg",image2)
