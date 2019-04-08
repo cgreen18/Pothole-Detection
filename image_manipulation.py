@@ -23,11 +23,11 @@ def rename_all_(path):
         os.rename(old_file , new_file)
     return
 
-def rename_this_many_(path , count):
+def rename_this_many_(path , new_path , count):
     for i in range(0, count):
         filename = os.listdir(path)[i]
         old_file = os.path.join(path,filename)
-        new_file = os.path.join(path, "image" + str(i) + ".jpg")
+        new_file = os.path.join(new_path, "image" + str(i) + ".jpg")
         os.rename(old_file , new_file)
     return
 
@@ -38,8 +38,6 @@ def is_daytime(hsv_image):
 
     sum = 0
     avg_sum = h*w*50
-
-    print hsv_image[:,:,2].shape
 
     for i in range(0,h):
         for j in range(0,w):
@@ -63,9 +61,6 @@ def process_image(image_path):
 
     #hue saturation value
     im_hsv = cv2.cvtColor(orig_image,cv2.COLOR_BGR2HSV)
-
-    print len(im_hsv[:,:,2])
-
 
     if classify_hsv_image(im_hsv) == "daylight":
         mask = cv2.inRange(im_hsv,(0,0,100),(255,60,180))
@@ -95,12 +90,15 @@ def main():
     additional_path ="bdd100k/images/10k/test"
     current_directory = ""
     data_path = additional_path + current_directory
+
+    new_path = "bdd100k/images/10k/renamed_images"
     #"~/Documents/University/Junior Year/Pothole Detection/bdd100k/images/10k/test"
 
     count = 5
 
-    rename_this_many_(data_path , count)
+    rename_this_many_(data_path , new_path , count)
 
+    
     file_number = 0
 
     image_path = os.path.join(data_path, "image" + str(file_number) + ".jpg")
