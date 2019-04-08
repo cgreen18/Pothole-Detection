@@ -5,9 +5,8 @@ Version:
 1.0 - April 7 2019 - Basic functionality to learn libraries
 1.1 - April 8 2019 - Added better code structure
 1.2 - April 8 2019 - Works as intended. Still requires paramter tuning
-
+1.3 - April 8 2019 - Added daylight or not classification
 '''
-
 ##colorizer.org
 
 import cv2
@@ -15,17 +14,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 
-
-#Renames file number num in path
-def rename_file( path , num , new_name ):
-    file = os.listdir(folder)[file_number]
-    return
-
 def rename_all_(path):
     i = 0
     for filename in os.listdir(path):
-        os.rename(filename,"image" + str(i) )
-        i += 1
+        filename = os.listdir(path)[i]
+        old_file = os.path.join(path,filename)
+        new_file = os.path.join(path, "image" + str(i) + ".jpg")
+        os.rename(old_file , new_file)
     return
 
 def rename_this_many_(path , count):
@@ -34,8 +29,32 @@ def rename_this_many_(path , count):
         old_file = os.path.join(path,filename)
         new_file = os.path.join(path, "image" + str(i) + ".jpg")
         os.rename(old_file , new_file)
-        #os.rename(filename,"image" + str(i))
     return
+
+def is_daytime(hsv_image):
+    is_day = True
+
+    h , w , d = hsv_image.shape
+
+    sum = 0
+    avg_sum = h*w*50
+
+    print hsv_image[:,:,2].shape
+
+    for i in range(0,h):
+        for j in range(0,w):
+            sum += hsv_image[:,:,2][i,j]
+
+    if sum < avg_sum:
+        is_day = False
+
+    return is_day
+
+def classify_hsv_image(hsv_image):
+    if is_daytime(hsv_image) == True:
+        return "daylight"
+
+    return "not daylight"
 
 def process_image(image_path):
     im = cv2.imread(image_path)
@@ -44,6 +63,16 @@ def process_image(image_path):
 
     #hue saturation value
     im_hsv = cv2.cvtColor(orig_image,cv2.COLOR_BGR2HSV)
+
+    print len(im_hsv[:,:,2])
+
+
+    if classify_hsv_image(im_hsv) == "daylight":
+        mask = cv2.inRange(im_hsv,(0,0,100),(255,60,180))
+        print "daylight detected"
+    elif classify_hsv_image(im_hsv) == "not daylight":
+        mask = cv2.inRange(im_hsv,(0,0,100),(255,150,230))
+        print "not daylight detected"
 
     #allow values of hue 0-14 , saturation 100-255 and value 100-255
     mask = cv2.inRange(im_hsv,(0,0,100),(255,60,180))
