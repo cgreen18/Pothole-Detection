@@ -13,7 +13,6 @@ Version:
 
 import cv2
 import matplotlib.pyplot as plt
-#from plt import plot, subplot, draw,
 import numpy as np
 import os
 import time
@@ -37,6 +36,7 @@ def rename_this_many_(path , new_path , count):
 
 def get_avg_val(hsv_image):
     sum = 0
+    h , w , d = hsv_image.shape
 
     for i in range(0,h):
         for j in range(0,w):
@@ -48,11 +48,9 @@ def get_avg_val(hsv_image):
 
 def is_daytime(hsv_image):
     #paramter
-    threshold = 120
+    threshold = 120 #/255
 
     is_day = True
-
-    h , w , d = hsv_image.shape
 
     avg_val = get_avg_val(hsv_image)
 
@@ -75,20 +73,31 @@ def classify_hsv_image(hsv_image, verbose):
 
 def get_mask(im_class , im_hsv ):
     if im_class == "daylight":
-        return cv2.inRange(im_hsv,(0,0,100),(255,60,180))
+        return cv2.inRange(im_hsv,(0,0,80),(255,60,150))
 
     #default
     #elif im_class == "not daylight":
     return cv2.inRange(im_hsv,(0,0,100),(255,150,230))
 
 def clean_noise_(image, (kernel_h , kernel_w) ):
-    kernel = np.ones((12,12));
+    kernel = np.ones(( kernel_h , kernel_w ));
 
-    image = cv2.erode(image, kernel, iterations=1)
+    image = cv2.erode(image, kernel , iterations=1)
 
-    image = cv2.dilate(image,kernel,iterations =1)
+    image = cv2.dilate(image, kernel , iterations =1)
 
     return image
+
+'''
+    Set h = 640 and w = 380
+'''
+def resize_(image , desired_h , desired_w ):
+    im_h , im_w , im_d = image.shape()
+
+    image = cv2.resize(image, () , interpolation = cv2.INTER_AREA)
+
+    return
+
 
 def process_image(image_path , verbose):
     im = cv2.imread(image_path)
@@ -104,13 +113,13 @@ def process_image(image_path , verbose):
 
     im = cv2.bitwise_and(orig_image,orig_image,mask = mask)
 
-    kernel_dim = ( 12 , 12 )
+    kernel_dim = ( 100 , 100 )
 
     filter = clean_noise_(im , kernel_dim)
 
     filter[filter>0] = 1
 
-    proc_image = orig_image*im
+    proc_image = orig_image*filter
 
     return (orig_image , proc_image)
 
@@ -152,7 +161,12 @@ def main():
 
     rename_this_many_(data_path , new_path , count)
 
-    slideshow_images(new_path , count , 3 , verbose)
+    slideshow_images(new_path , count , 10 , verbose)
+
+    '''
+    Crop image into small rectangle
+    cv2.resize()
+    '''
 
     return
 
