@@ -6,6 +6,7 @@ Version:
 1.1 - April 8 2019 - Added better code structure
 1.2 - April 8 2019 - Works as intended. Still requires paramter tuning
 1.3 - April 8 2019 - Added daylight or not classification
+1.4 - April 8 2019 - Added slideshow functionality
 '''
 ##colorizer.org
 
@@ -90,11 +91,11 @@ def process_image(image_path , verbose):
 
     return (orig_image , proc_image)
 
-def slideshow_images(new_path):
-    for i in range(0,20):
+def slideshow_images(path , number , pause_length):
+    for i in range(0,number):
         file_number = i
 
-        image_path = os.path.join(new_path, "image" + str(file_number) + ".jpg")
+        image_path = os.path.join(path, "image" + str(file_number) + ".jpg")
 
 
         (orig_image, proc_image) = process_image(image_path , verbose = True)
@@ -109,14 +110,13 @@ def slideshow_images(new_path):
 
         plt.show(block=False)
 
-        time.sleep(4)
+        time.sleep(pause_length)
 
         plt.close()
 
     return
 
 def main():
-
     additional_path ="bdd100k/images/10k/test"
     current_directory = ""
     data_path = additional_path + current_directory
@@ -128,9 +128,7 @@ def main():
 
     rename_this_many_(data_path , new_path , count)
 
-    slideshow_images(new_path)
-
-
+    slideshow_images(new_path , count , 3)
 
     return
 
