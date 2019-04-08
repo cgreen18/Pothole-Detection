@@ -50,13 +50,16 @@ def is_daytime(hsv_image):
 
     return is_day
 
-def classify_hsv_image(hsv_image):
+def classify_hsv_image(hsv_image, verbose):
     if is_daytime(hsv_image) == True:
-        return "daylight"
+        classification = "daylight"
 
-    return "not daylight"
+    if verbose == True:
+        print classification
 
-def process_image(image_path):
+    return classification
+
+def process_image(image_path , verbose):
     im = cv2.imread(image_path)
 
     orig_image = cv2.cvtColor(im,cv2.COLOR_BGR2RGB)
@@ -64,12 +67,12 @@ def process_image(image_path):
     #hue saturation value
     im_hsv = cv2.cvtColor(orig_image,cv2.COLOR_BGR2HSV)
 
-    if classify_hsv_image(im_hsv) == "daylight":
+    im_class = classify_hsv_image(im_hsv , verbose)
+
+    if im_class == "daylight":
         mask = cv2.inRange(im_hsv,(0,0,100),(255,60,180))
-        print "daylight detected"
-    elif classify_hsv_image(im_hsv) == "not daylight":
+    elif im_class == "not daylight":
         mask = cv2.inRange(im_hsv,(0,0,100),(255,150,230))
-        print "not daylight detected"
 
     #allow values of hue 0-14 , saturation 100-255 and value 100-255
     mask = cv2.inRange(im_hsv,(0,0,100),(255,60,180))
@@ -87,29 +90,14 @@ def process_image(image_path):
 
     return (orig_image , proc_image)
 
-def main():
-
-    additional_path ="bdd100k/images/10k/test"
-    current_directory = ""
-    data_path = additional_path + current_directory
-
-    new_path = "bdd100k/images/10k/renamed_images"
-    #"~/Documents/University/Junior Year/Pothole Detection/bdd100k/images/10k/test"
-
-    count = 20
-
-    rename_this_many_(data_path , new_path , count)
-
-
-    #plt.ion()
-
+def slideshow_images(new_path):
     for i in range(0,20):
         file_number = i
 
-        image_path = os.path.join(data_path, "image" + str(file_number) + ".jpg")
+        image_path = os.path.join(new_path, "image" + str(file_number) + ".jpg")
 
 
-        (orig_image, proc_image) = process_image(image_path)
+        (orig_image, proc_image) = process_image(image_path , verbose = True)
 
         plt.figure()
 
@@ -125,26 +113,24 @@ def main():
 
         plt.close()
 
-        #cv2.destroyAllWindows()
     return
-    #file_number = 0
 
-    image_path = os.path.join(data_path, "image" + str(file_number) + ".jpg")
+def main():
+
+    additional_path ="bdd100k/images/10k/test"
+    current_directory = ""
+    data_path = additional_path + current_directory
+
+    new_path = "bdd100k/images/10k/renamed_images"
+    #"~/Documents/University/Junior Year/Pothole Detection/bdd100k/images/10k/test"
+
+    count = 20
+
+    rename_this_many_(data_path , new_path , count)
+
+    slideshow_images(new_path)
 
 
-    (orig_image, proc_image) = process_image(image_path)
-
-    plt.figure()
-    plt.subplot(2,1,1)
-    plt.imshow(orig_image)
-
-    plt.subplot(2,1,2)
-    plt.imshow(proc_image)
-
-    plt.show()
-
-    #cv2.imwrite("image1_modified",target)
-    #cv2.imwrite("processed_image.jpg",image2)
 
     return
 
