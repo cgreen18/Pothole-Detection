@@ -5,6 +5,7 @@ Usage: Call functions through other script
 Version:
 1.0 - April 15 2019 - Created structure
 1.1 - April 21 2019 - Added many functions. Compiles and nearly operates as intended
+1.2 - April 22 2019 - Further modified the segmentation and filtering
 '''
 
 import cv2
@@ -95,10 +96,10 @@ def segment_im_file(image_path):
     hsv_image = cv2.cvtColor(orig_image,cv2.COLOR_BGR2HSV)
 
     (proc_hsv_image , im_filter ) = extract_road(hsv_image)
+    proc_image = cv2.cvtColor(proc_hsv_image , cv2.COLOR_HSV2RGB)
 
     bounds = segment_filter(im_filter)
 
-    proc_image = cv2.cvtColor(proc_hsv_image , cv2.COLOR_HSV2RGB)
 
     return (orig_image , proc_image , bounds)
 
